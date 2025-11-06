@@ -1,0 +1,19 @@
+.footer {
+    width: 100%;
+    height: var(--footer-height);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary-hover);
+    margin-top: auto;
+    padding: 0 var(--space-lg);
+}
+
+.footer__text {
+    color: var(--white);
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-400);
+    line-height: var(--line-height-medium);
+    text-align: center;
+    margin: 0;
+}

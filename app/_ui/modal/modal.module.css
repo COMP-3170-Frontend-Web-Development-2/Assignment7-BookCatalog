@@ -1,0 +1,78 @@
+.buttonstyle {
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+    cursor: pointer;
+    outline: none;
+
+    font-family: inherit;
+    font-weight: var(--font-weight-600);
+
+    transition: var(--transition);
+    text-align: center;
+    text-decoration: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--white);
+}
+
+.buttonstyle:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.buttonstyle:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.buttonstyle--add {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    font-size: var(--font-size-xl);
+
+    width: var(--button-width);
+    height: var(--button-height);
+    padding: var(--space-lg);
+}
+
+.buttonstyle--add:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.buttonstyle--edit {
+    background-color: var(--edit);
+    border-color: var(--edit);
+    font-size: var(--font-size-small);
+
+    width: var(--button-width);
+    height: var(--space-xl);
+    padding: var(--space-sm) var(--space-md);
+}
+
+.buttonstyle--edit:hover:not(:disabled) {
+    background-color: var(--edit-hover);
+    border-color: var(--edit-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+dialog {
+    border: none;
+    border-radius: var(--radius);
+    padding: 0;
+    max-width: 500px;
+    margin: auto;
+    position: relative;
+    align-items: center;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}

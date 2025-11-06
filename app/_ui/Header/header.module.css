@@ -1,0 +1,30 @@
+.header {
+    width: 100%;
+    height: var(--header-height);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary);
+    border-bottom: 1px solid var(--grey-100);
+    padding: 0 var(--space-xl);
+}
+
+.header__logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: var(--white);
+}
+
+.header__icon {
+    color: var(--white);
+    flex-shrink: 0;
+    width: 60px;
+}
+
+.header__title {
+    color: var(--white);
+    font-size: 40px;
+    font-weight: var(--font-weight-700);
+}

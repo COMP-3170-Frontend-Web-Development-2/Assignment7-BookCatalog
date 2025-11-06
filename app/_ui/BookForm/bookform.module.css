@@ -1,0 +1,80 @@
+.form_container {
+    padding: 2em;
+
+    > form {
+        padding: 1em 0;
+
+        button {
+            margin-left: 5em;
+        }
+    }
+
+    .form_control {
+        padding: 0.5em;
+        label {
+            display: inline-block;
+            width: 10em;
+        }
+        margin: 0.5em 0;
+    }
+}
+
+.form_title {
+    text-align: center;
+}
+
+.form_label {
+    font-size: var(--font-size-medium);
+    font-family: inherit;
+    font-weight: bold;
+}
+
+.form_input {
+    border: 1px solid;
+    border-radius: 4px;
+    font-size: var(--font-size-medium);
+    font-family: inherit;
+    text-align: start;
+    text-decoration: none;
+    padding: 4px 8px;
+    width: 200px;
+    height: 28px;
+}
+
+.book_button {
+    background-color: var(--primary);
+    color: var(--white);
+    border: 2px solid var(--primary);
+    border-radius: var(--radius);
+
+    font-size: var(--font-size-medium);
+    font-family: inherit;
+    font-weight: var(--font-weight-600);
+    text-align: center;
+    text-decoration: none;
+
+    width: 200px;
+    height: 32px;
+    padding: var(--space-xs) var(--space-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: var(--transition);
+    outline: none;
+
+    margin-top: 1rem;
+}
+
+.book_button:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+dialog::backdrop {
+    background: rgb(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
