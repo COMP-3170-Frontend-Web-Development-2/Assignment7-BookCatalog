@@ -96,8 +96,9 @@
     margin-top: auto;
     padding: var(--space-sm);
     text-align: center;
-    border-top: 1px solid var(--grey-100);
+    border: none;
     transition: color 0.2s ease;
+    background-color: var(--white);
 }
 
 .book__link:hover {
@@ -130,4 +131,163 @@
 .borrowed {
     background-color: var(--warning-50, #fff3e0);
     color: var(--warning-700, #8a4f00);
+}
+
+.detailsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    border: 1px solid var(--grey-100);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    font-family: var(--font-family);
+}
+
+.details {
+    display: grid;
+    grid-template-columns: var(--book-width) 1fr;
+    gap: var(--space-md);
+}
+
+@media (max-width: 640px) {
+    .details {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cover {
+    width: var(--book-width);
+    height: var(--book-height);
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--grey-100);
+}
+
+.details_text {
+    display: grid;
+    gap: var(--space-sm);
+}
+
+.title {
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-700);
+    color: var(--black);
+    margin: 0;
+}
+
+.book_info {
+    font-size: var(--font-size-large);
+    line-height: var(--line-height-medium);
+    color: var(--black-500);
+    margin: 0;
+    text-align: start;
+}
+
+.infoList {
+    display: grid;
+    gap: var(--space-xs);
+}
+
+.infoList dt {
+    font-weight: var(--font-weight-600);
+    color: var(--grey-600);
+    font-size: var(--font-size-medium);
+}
+
+.infoList dd {
+    margin: 0;
+    color: var(--black);
+    font-size: var(--font-size-medium);
+}
+
+.closeButton {
+    background-color: var(--delete);
+    color: var(--white);
+    border: 2px solid var(--delete);
+    width: var(--button-width);
+    height: var(--space-xl);
+    font-size: var(--font-size-small);
+    padding: var(--space-xs) var(--space-sm);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+}
+
+.closeButton:hover {
+    background-color: var(--delete-hover);
+    border-color: var(--delete-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.similarSection {
+    display: grid;
+    gap: var(--space-sm);
+}
+
+.similarTitle {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-700);
+    color: var(--black);
+}
+
+.statusText {
+    color: var(--grey-300);
+    font-size: var(--font-size-medium);
+}
+
+.errorText {
+    color: var(--delete);
+    font-size: var(--font-size-medium);
+}
+
+.similarGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-md);
+}
+
+.similarItem {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    border: 1px solid var(--grey-100);
+    border-radius: var(--radius);
+    text-decoration: none;
+    background: var(--white);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.similarItem:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.similarImage {
+    width: 64px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--grey-100);
+}
+
+.similarMeta {
+    display: grid;
+    gap: var(--space-xs);
+}
+
+.similarName {
+    font-weight: var(--font-weight-600);
+    font-size: var(--font-size-medium);
+    color: var(--black);
+}
+
+.similarPrice {
+    font-size: var(--font-size-small);
+    color: var(--grey-600);
 }
