@@ -22,6 +22,7 @@ function Homepage() {
     });
 
     // To switch view -  Catalog/Loan
+    // (Extended: also supports "details" view now)
     const [view, setView] = useState("catalog");
 
     // Save books and loans to localStorage
@@ -92,6 +93,11 @@ function Homepage() {
     function handleDelete(id) {
         setBooks((prev) => prev.filter((b) => b.id !== id));
         setLoans((prev) => prev.filter((l) => l.bookId !== id));
+        // If we are seeing the details of this book, go back to catalog
+        if (detailsBook && detailsBook.id === id) {
+            setDetailsBook(null);
+            setView("catalog");
+        }
     }
 
     // Select one book at a time
@@ -129,11 +135,22 @@ function Homepage() {
         };
 
         setLoans((prev) => [...prev, newLoan]);
+
+        // If the loaned book is the one opened in details, mark as onLoan in the details view
+        if (detailsBook && detailsBook.id === bookId) {
+            setDetailsBook((prev) => (prev ? { ...prev, onLoan: true } : prev));
+        }
     }
 
     // Return a loaned book (remove it from the list)
     function returnLoan(loanId) {
+        const loan = loans.find((l) => l.id === loanId);
         setLoans((prev) => prev.filter((l) => l.id !== loanId));
+        if (loan && detailsBook && detailsBook.id === loan.bookId) {
+            setDetailsBook((prev) =>
+                prev ? { ...prev, onLoan: false } : prev
+            );
+        }
     }
 
     //list of loaned books with book titles
@@ -141,6 +158,78 @@ function Homepage() {
         const book = books.find((b) => b.id === loan.bookId);
         return { ...loan, title: book?.title ?? "(deleted book)" };
     });
+
+    // ===== DETAILS VIEW STATE (INSIDE HOMEPAGE) =====
+    // To control the visibility of the book details
+    // (We embed "details" as a view in Homepage, similar to "loans")
+    const [detailsBook, setDetailsBook] = useState(null);
+
+    // To store the list of similar books from the API
+    const [similar, setSimilar] = useState([]);
+
+    // To manage loading and error states for API calls
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    // When show details is not showing, dont show similar books
+    // When show details is showing, show similar books by title
+    useEffect(() => {
+        let isCancelled = false;
+
+        async function loadSimilar() {
+            if (view !== "details") return;
+            if (!detailsBook?.title) return;
+
+            try {
+                setLoading(true);
+                setError("");
+
+                //Similar books by title
+                const q = encodeURIComponent(detailsBook.title || "");
+
+                // Fetching API
+                const res = await fetch(
+                    `https://api.itbook.store/1.0/search/${q}`
+                );
+
+                // If doesnt work, throw an error
+                if (!res.ok) throw new Error(`Response status: ${res.status}`);
+
+                const data = await res.json();
+                if (!isCancelled) {
+                    setSimilar(
+                        Array.isArray(data?.books) ? data.books.slice(0, 6) : []
+                    );
+                }
+            } catch (err) {
+                if (!isCancelled)
+                    setError(err?.message || "Failed to load similar books");
+            } finally {
+                if (!isCancelled) setLoading(false);
+            }
+        }
+
+        // Reset when leaving details
+        if (view !== "details") {
+            setSimilar([]);
+            setLoading(false);
+            setError("");
+        } else {
+            loadSimilar();
+        }
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [view, detailsBook?.title]);
+
+    // Open details from a book card
+    function openDetails(bookObj) {
+        // Mark current onLoan state from loans list
+        const onLoan = loans.some((l) => l.bookId === bookObj.id);
+        setDetailsBook({ ...bookObj, onLoan });
+        setView("details");
+    }
 
     return (
         <div className={styles.homepage}>
@@ -150,16 +239,29 @@ function Homepage() {
             {/* Toolbar */}
             <div className={`${styles.toolbar} ${styles.toolbar__full}`}>
                 <div className={styles.toolbar__left}>
-                    {view === "catalog" ? (
+                    {view === "catalog" && (
                         <button
                             className={styles.toolbar__loanBtn}
                             onClick={() => setView("loans")}>
                             Loans
                         </button>
-                    ) : (
+                    )}
+
+                    {view === "loans" && (
                         <button
                             className={styles.toolbar__loanBtn}
                             onClick={() => setView("catalog")}>
+                            Back to Catalog
+                        </button>
+                    )}
+
+                    {view === "details" && (
+                        <button
+                            className={styles.toolbar__loanBtn}
+                            onClick={() => {
+                                setDetailsBook(null);
+                                setView("catalog");
+                            }}>
                             Back to Catalog
                         </button>
                     )}
@@ -257,6 +359,8 @@ function Homepage() {
                                         key={book.id}
                                         book={{ ...book, onLoan }}
                                         onClick={() => handleSelectBook(index)}
+                                        // NEW: open details view inside Homepage
+                                        onDetails={(b) => openDetails(b)}
                                     />
                                 );
                             })}
@@ -322,6 +426,119 @@ function Homepage() {
                                     </ul>
                                 )}
                             </div>
+                        </div>
+                    </main>
+                )}
+
+                {/* Details View */}
+                {view === "details" && detailsBook && (
+                    <main className={styles.mainDetails}>
+                        <div className={styles.details_container}>
+                            <div className={styles.details_coverWrap}>
+                                <img
+                                    src={
+                                        detailsBook.image ||
+                                        detailsBook.url ||
+                                        ""
+                                    }
+                                    alt={detailsBook.title || "Book cover"}
+                                    onError={(e) => {
+                                        e.currentTarget.src =
+                                            "https://via.placeholder.com/240x320?text=No+Image";
+                                    }}
+                                />
+                            </div>
+
+                            <div className={styles.details_info}>
+                                <h2 className={styles.details_title}>
+                                    {detailsBook.title}
+                                </h2>
+                                <p className={styles.details_meta}>
+                                    {detailsBook.author && (
+                                        <span>
+                                            Author: {detailsBook.author}
+                                        </span>
+                                    )}
+                                    {detailsBook.publisher && (
+                                        <>
+                                            <span>
+                                                Publisher:{" "}
+                                                {detailsBook.publisher}
+                                            </span>
+                                        </>
+                                    )}
+                                    {detailsBook.year && (
+                                        <>
+                                            <span>
+                                                Year: {detailsBook.year}
+                                            </span>
+                                        </>
+                                    )}
+
+                                    {detailsBook.language && (
+                                        <span>
+                                            Language: {detailsBook.language}
+                                        </span>
+                                    )}
+                                    {detailsBook.pages && (
+                                        <>
+                                            <span>
+                                                Number of pages:{" "}
+                                                {detailsBook.pages} pages
+                                            </span>
+                                        </>
+                                    )}
+                                </p>
+
+                                {/* simple status */}
+                                <p
+                                    className={
+                                        (detailsBook.onLoan
+                                            ? styles.statusLoaned
+                                            : styles.statusAvailable) ?? ""
+                                    }>
+                                    {detailsBook.onLoan
+                                        ? "Borrowed"
+                                        : "Available"}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className={styles.similarBlock}>
+                            <h3 className={styles.subheading}>Similar books</h3>
+
+                            {loading && (
+                                <p className={styles.helper}>Loading…</p>
+                            )}
+                            {error && (
+                                <p className={styles.error}>Error: {error}</p>
+                            )}
+
+                            <ul className={styles.gridSimilar}>
+                                {similar.map((s) => (
+                                    <li
+                                        key={s.isbn13}
+                                        className={styles.similarCard}>
+                                        <img
+                                            src={s.image}
+                                            alt={s.title}
+                                            onError={(e) => {
+                                                e.currentTarget.src =
+                                                    "https://via.placeholder.com/120x160?text=No+Image";
+                                            }}
+                                        />
+                                        <p className={styles.similarTitle}>
+                                            {s.title}
+                                        </p>
+                                    </li>
+                                ))}
+
+                                {!loading && !error && similar.length === 0 && (
+                                    <p className={styles.helper}>
+                                        No similar titles found.
+                                    </p>
+                                )}
+                            </ul>
                         </div>
                     </main>
                 )}
